@@ -1,0 +1,17 @@
+:root{
+    --cell-bg-color:#1E1F21;
+    --cell-weekend-bg-color:#272829;
+    --cell-color:white;
+    --grid-color:grey;
+    --currentDay-bg-color:red;
+    --currentDay-color:black;
+
+
+    --button-bg-color:#565759;
+    --button-text-color:#E6e6e6;
+    --button-bg-hover:#737374;
+
+    --header-bg-color:#2e2e2e;
+
+
+}

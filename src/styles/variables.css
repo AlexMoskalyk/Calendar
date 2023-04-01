@@ -2,6 +2,7 @@
     --cell-bg-color:#1E1F21;
     --cell-weekend-bg-color:#272829;
     --cell-color:white;
+    --cell-notSelectedMonth-color:#555759;
     --grid-color:grey;
     --currentDay-bg-color:red;
     --currentDay-color:black;

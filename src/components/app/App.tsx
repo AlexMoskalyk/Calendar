@@ -31,7 +31,9 @@ const nextHandler = () => setDisplayedDate(prev=>prev.clone().add(1,'month'));
        todayHandler={todayHandler}
        nextHandler={nextHandler}
        displayedDate={displayedDate}/>
-      <Calendar startDay={startDay}/>
+      <Calendar 
+      displayedDate={displayedDate}
+      startDay={startDay}/>
     </ShadowWrapper>
   );
 }

@@ -1,4 +1,4 @@
-import React , {useState}from 'react';
+import React , {useEffect, useState}from 'react';
 import moment from 'moment';
 import Header from '../header/Header';
 import Monitor from '../monitor/Monitor';
@@ -6,12 +6,16 @@ import Calendar from '../calendar/Calendar';
 import {ShadowWrapper} from './AppStyled';
 
 function App() {
+  moment.updateLocale('en', {week: {dow: 1}});
 
-  const [displayedDate, setDisplayedDate] = useState(moment())
- 
-   moment.updateLocale('en', {week: {dow: 1}})
+  const [displayedDate, setDisplayedDate] = useState(moment());
+  
+  
+  
+  
+  // const today = moment();
 // const endDay = moment().endOf('month').endOf('week');
-// const today = moment();
+
 const startDay = displayedDate.clone().startOf('month').startOf('week');
 
 const prevHandler = () => setDisplayedDate(prev=>prev.clone().subtract(1,'month'));

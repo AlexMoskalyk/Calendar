@@ -15,7 +15,7 @@ function App() {
   moment.updateLocale("en", { week: { dow: 1 } });
 
   const [displayedDate, setDisplayedDate] = useState(moment());
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<IEvent[]>([]);
   const [event, setEvent] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [operationMethod, setOperationMethod] = useState("");
@@ -47,6 +47,29 @@ function App() {
     setShowForm(false);
   };
 
+  const submitCreateEditForm = (preparedEvent:IEvent) => {
+    const fetchUrl = operationMethod === 'Edit' ? `${url}/events/${preparedEvent.id}` : `${url}/events`;
+    const httpMethod = operationMethod === 'Edit' ? 'PATCH' : 'POST';
+
+    fetch(fetchUrl,{
+      method:httpMethod,
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(preparedEvent)
+    })
+    .then(res=>res.json())
+    .then(res =>{
+      if (operationMethod === 'Edit') {
+        setEvents(prevState=>prevState.map(eventItem => eventItem.id === res.id ? res : eventItem));
+      }else {
+        setEvents(prevState=>[...prevState,res] as IEvent[]);
+      }
+      
+      closeCreateEditForm();
+    })
+  }
+
   useEffect(() => {
     fetch(`${url}/events?date_gte=${startDayQuery}&date_lte=${endDayQuery}`)
       .then((res) => res.json())
@@ -60,6 +83,7 @@ function App() {
     <>
       {showForm ? (
         <FormCreateEdit
+        submitCreateEditForm={submitCreateEditForm}
           event={event}
           closeCreateEditForm={closeCreateEditForm}
           operationMethod={operationMethod}

@@ -30,6 +30,7 @@ export const CellWrapper = styled.div<CellWrapperProps>`
 export const RowInCell = styled.div`
   display: flex;
   justify-content: end;
+  // flex-direction:column;
 `;
 
 export const DayWrapper = styled.div`
@@ -51,3 +52,35 @@ display:flex;
 align-items:center;
 justify-content:center;
 `;
+
+export const EventListWrapper =styled.ul`
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+`;
+
+export const EventItemWrapper = styled.li`
+
+`;
+
+export const EventItemTittle =styled.button`
+text-overflow:ellipsis;
+overflow:hidden;
+white-space:nowrap;
+width:114px;
+border:unset;
+background:unset;
+color:var(--eventTittle-color);
+cursor:pointer;
+margin:0;
+padding:0;
+`;
+
+export const WorldHolidayWrapper = styled.div`
+`;
+
+export const WorldHoliday = styled.span`
+
+`;
+

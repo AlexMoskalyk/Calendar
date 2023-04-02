@@ -11,6 +11,7 @@
     "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
     "@types/styled-components": "^5.1.26",
+    "json-server": "^0.17.3",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -23,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "server": "json-server -p 5000  --watch db.json"
   },
   "eslintConfig": {
     "extends": [

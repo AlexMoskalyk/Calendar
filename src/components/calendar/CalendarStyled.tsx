@@ -59,13 +59,20 @@ display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
+list-style: none;
 `;
 
 export const EventItemWrapper = styled.li`
-
+width:100%;
+display:flex;
+padding-left:2px;
+padding-right:2px;
+margin-bottom:2px;
 `;
 
 export const EventItemTittle =styled.button`
+position:relative;
+flex-grow:1;
 text-overflow:ellipsis;
 overflow:hidden;
 white-space:nowrap;
@@ -76,6 +83,15 @@ color:var(--eventTittle-color);
 cursor:pointer;
 margin:0;
 padding:0;
+text-align:left;
+background-color:var(--eventTitle-bg-color);
+border:1px solid var(--eventTitle-bg-color);
+border-radius:2px;
+
+&:hover,:focus{
+  background-color:var( --button-bg-hover); 
+  }
+  
 `;
 
 export const WorldHolidayWrapper = styled.div`

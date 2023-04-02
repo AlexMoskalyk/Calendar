@@ -23,13 +23,16 @@ export const ButtonWrapper = styled.button`
 border:unset;
 background-color:var( --button-bg-color);
 height:20px;
-margin-right:2px;
 border-radius:4px;
 color:var(--button-text-color);
 cursor:pointer;
 
 &:hover,:focus{
 background-color:var( --button-bg-hover); 
+}
+
+&:not(:last-child){
+margin-right:2px;
 }
 `;
 

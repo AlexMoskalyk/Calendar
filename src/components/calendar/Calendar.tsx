@@ -12,14 +12,14 @@ import {
   DayWrapper,
   CurrentDay,
   EventListWrapper,
-  } from "./CalendarStyled";
+} from "./CalendarStyled";
 
 type CalendarProps = {
   startDay: any;
   displayedDate: any;
   totalDays: number;
   events: IEvent[];
-  openCreateEditForm: any,
+  openCreateEditForm: any;
 };
 
 function Calendar({
@@ -27,7 +27,7 @@ function Calendar({
   displayedDate,
   totalDays,
   events,
-  openCreateEditForm
+  openCreateEditForm,
 }: CalendarProps) {
   const day = startDay.clone().subtract(1, "day");
   const daysList = [...Array(totalDays)].map(() => day.add(1, "day").clone());
@@ -57,7 +57,9 @@ function Calendar({
             key={dayItem.unix()}
           >
             <RowInCell>
-              <DayWrapper onClick={(e)=>openCreateEditForm('Create')}>
+              <DayWrapper
+                onClick={() => openCreateEditForm("Create", null, dayItem)}
+              >
                 {isCurrentDay(dayItem) ? (
                   <CurrentDay>{dayItem.format("D")}</CurrentDay>
                 ) : (
@@ -77,11 +79,25 @@ function Calendar({
                     event.date >= dayItem.format("X") &&
                     event.date <= dayItem.clone().endOf("day").format("X")
                 )
+                .slice(0, 2)
                 .map((filtredEvent) => (
                   <EventItemWrapper key={filtredEvent.id}>
-                    <EventItemTittle onClick={()=>openCreateEditForm('Edit',filtredEvent)}>{filtredEvent.title}</EventItemTittle>
+                    <EventItemTittle
+                      onClick={() => openCreateEditForm("Edit", filtredEvent)}
+                    >
+                      {filtredEvent.title}
+                    </EventItemTittle>
                   </EventItemWrapper>
                 ))}
+              {/* {events.length > 2 ? (
+                <EventItemWrapper key="show more">
+                  <EventItemTittle
+                   
+                  >
+                    show more...
+                  </EventItemTittle>
+                </EventItemWrapper>
+              ) : null} */}
             </EventListWrapper>
           </CellWrapper>
         ))}
@@ -91,4 +107,3 @@ function Calendar({
 }
 
 export default Calendar;
-

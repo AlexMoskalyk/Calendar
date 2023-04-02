@@ -15,7 +15,7 @@ justify-content:center;
 `;
 
 export const FormWrapper = styled.form`
-width:200px;
+width:320px;
 background-color:var(--form-bg-color);
 color:var(--form-color);
 border-top:1px solid #737374;
@@ -27,7 +27,7 @@ overflow: hidden;
 `;
 
 export const FormEventTitle = styled.input`
-padding: 4px 14px;
+padding: 8px 14px;
 font-size:: 13.6px;
 width:100%;
 border:unset;
@@ -37,18 +37,36 @@ outline:unset;
 border-bottom: 1px solid var(--form-input-border-color)
 `;
 
-export const FormEventDescription = styled.input`
-padding: 4px 14px;
+export const FormEventDescription = styled.textarea`
+padding: 8px 14px;
 font-size:: 13.6px;
 width:100%;
 border:unset;
 background-color:var(--form-input-bg-color);
 color:var(--form-input-color);
 outline:unset;
-border-bottom: 1px solid var(--form-input-border-color)
+border-bottom: 1px solid var(--form-input-border-color);
+resize:none;
+height:60px;
 `;
 
 export const FormButton = styled.button`
+border:unset;
+background-color:var( --button-bg-color);
+height:20px;
+
+border-radius:4px;
+color:var(--button-text-color);
+cursor:pointer;
+
+&:hover,:focus{
+background-color:var( --button-bg-hover); 
+}
+
+&:not(:last-child){
+margin-right:2px;
+}
+
 `;
 
 export const FormButtonsWrapper=styled.div`

@@ -16,9 +16,10 @@ function App() {
 
   const [displayedDate, setDisplayedDate] = useState(moment());
   const [events, setEvents] = useState<IEvent[]>([]);
-  const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState<IEvent | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [operationMethod, setOperationMethod] = useState("");
+  const [certainDay, setCertainDay] = useState("");
 
   // const today = moment();
   // const endDay = moment().endOf('month').endOf('week');
@@ -35,46 +36,77 @@ function App() {
     setDisplayedDate((prev) => prev.clone().add(1, "month"));
   // const toggleCreateEditForm = (value:boolean) => setShowForm(value);
 
-  const openCreateEditForm = (method: "Edit" | "Create", eventForEdit: any) => {
-    // console.log('Method',method)
-    setShowForm(true);
-    setEvent(eventForEdit);
+  const openCreateEditForm = (
+    method: "Edit" | "Create",
+    eventForEdit: IEvent,
+    day: string
+  ) => {
     setOperationMethod(method);
+    setEvent(eventForEdit);
+    setCertainDay(day);
+    setShowForm(true);
   };
 
   const closeCreateEditForm = () => {
     setEvent(null);
+    setCertainDay("");
     setShowForm(false);
   };
 
-  const submitCreateEditForm = (preparedEvent:IEvent) => {
-    const fetchUrl = operationMethod === 'Edit' ? `${url}/events/${preparedEvent.id}` : `${url}/events`;
-    const httpMethod = operationMethod === 'Edit' ? 'PATCH' : 'POST';
+  const submitCreateEditForm = (preparedEvent: IEvent) => {
+    const fetchUrl =
+      operationMethod === "Edit"
+        ? `${url}/events/${preparedEvent.id}`
+        : `${url}/events`;
+    const httpMethod = operationMethod === "Edit" ? "PATCH" : "POST";
 
-    fetch(fetchUrl,{
-      method:httpMethod,
-      headers:{
-        'Content-Type':'application/json'
+    fetch(fetchUrl, {
+      method: httpMethod,
+      headers: {
+        "Content-Type": "application/json",
       },
-      body:JSON.stringify(preparedEvent)
+      body: JSON.stringify(preparedEvent),
     })
-    .then(res=>res.json())
-    .then(res =>{
-      if (operationMethod === 'Edit') {
-        setEvents(prevState=>prevState.map(eventItem => eventItem.id === res.id ? res : eventItem));
-      }else {
-        setEvents(prevState=>[...prevState,res] as IEvent[]);
-      }
-      
-      closeCreateEditForm();
+      .then((res) => res.json())
+      .then((res) => {
+        if (operationMethod === "Edit") {
+          setEvents((prevState) =>
+            prevState.map((eventItem) =>
+              eventItem.id === res.id ? res : eventItem
+            )
+          );
+        } else {
+          setEvents((prevState) => [...prevState, res] as IEvent[]);
+        }
+
+        closeCreateEditForm();
+      });
+  };
+
+  const removeEventHandler = (eventId: any) => {
+    const fetchUrl = `${url}/events/${eventId}`;
+    const httpMethod = "DELETE";
+    fetch(fetchUrl, {
+      method: httpMethod,
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-  }
+      .then((res) => res.json())
+      .then((res) => {
+        setEvents((prevState) =>
+          prevState.filter((eventItem) =>
+            eventItem.id !== eventId )
+        );
+
+        closeCreateEditForm();
+      });
+  };
 
   useEffect(() => {
     fetch(`${url}/events?date_gte=${startDayQuery}&date_lte=${endDayQuery}`)
       .then((res) => res.json())
       .then((res) => {
-        console.log("response", res);
         setEvents(res);
       });
   }, [startDayQuery, endDayQuery]);
@@ -83,7 +115,9 @@ function App() {
     <>
       {showForm ? (
         <FormCreateEdit
-        submitCreateEditForm={submitCreateEditForm}
+          removeEventHandler={removeEventHandler}
+          certainDay={certainDay}
+          submitCreateEditForm={submitCreateEditForm}
           event={event}
           closeCreateEditForm={closeCreateEditForm}
           operationMethod={operationMethod}

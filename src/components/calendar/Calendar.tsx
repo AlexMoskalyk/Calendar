@@ -12,13 +12,14 @@ import {
   DayWrapper,
   CurrentDay,
   EventListWrapper,
-} from "./CalendarStyled";
+  } from "./CalendarStyled";
 
 type CalendarProps = {
   startDay: any;
   displayedDate: any;
   totalDays: number;
   events: IEvent[];
+  openCreateEditForm: any,
 };
 
 function Calendar({
@@ -26,6 +27,7 @@ function Calendar({
   displayedDate,
   totalDays,
   events,
+  openCreateEditForm
 }: CalendarProps) {
   const day = startDay.clone().subtract(1, "day");
   const daysList = [...Array(totalDays)].map(() => day.add(1, "day").clone());
@@ -55,7 +57,7 @@ function Calendar({
             key={dayItem.unix()}
           >
             <RowInCell>
-              <DayWrapper>
+              <DayWrapper onClick={(e)=>openCreateEditForm('Create')}>
                 {isCurrentDay(dayItem) ? (
                   <CurrentDay>{dayItem.format("D")}</CurrentDay>
                 ) : (
@@ -77,7 +79,7 @@ function Calendar({
                 )
                 .map((filtredEvent) => (
                   <EventItemWrapper key={filtredEvent.id}>
-                    <EventItemTittle>{filtredEvent.title}</EventItemTittle>
+                    <EventItemTittle onClick={()=>openCreateEditForm('Edit',filtredEvent)}>{filtredEvent.title}</EventItemTittle>
                   </EventItemWrapper>
                 ))}
             </EventListWrapper>

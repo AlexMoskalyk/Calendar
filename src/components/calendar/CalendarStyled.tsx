@@ -30,7 +30,7 @@ export const CellWrapper = styled.div<CellWrapperProps>`
 export const RowInCell = styled.div`
   display: flex;
   justify-content: end;
-  // flex-direction:column;
+  
 `;
 
 export const DayWrapper = styled.div`
@@ -40,6 +40,7 @@ export const DayWrapper = styled.div`
   height: 33px;
   width: 33px;
   margin:2px;
+  cursor:pointer;
 `;
 
 export const CurrentDay = styled.div`

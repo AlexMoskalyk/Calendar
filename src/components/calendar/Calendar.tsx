@@ -1,18 +1,9 @@
 import React from "react";
-import moment from "moment";
 import { IEvent } from "../../types/Interfaces";
-import {
-  EventItemWrapper,
-  EventItemTittle,
-  WorldHoliday,
-  WorldHolidayWrapper,
-  CalendarContainer,
-  CellWrapper,
-  RowInCell,
-  DayWrapper,
-  CurrentDay,
-  EventListWrapper,
-} from "./CalendarStyled";
+
+import { CalendarContainer } from "./CalendarStyled";
+import CalendarHeader from "../calendarHeader/CalendarHeader";
+import DaysOfMonthList from "../daysOfMonthList/DaysOfMonthList";
 
 type CalendarProps = {
   startDay: any;
@@ -29,78 +20,19 @@ function Calendar({
   events,
   openCreateEditForm,
 }: CalendarProps) {
-  const day = startDay.clone().subtract(1, "day");
-  const daysList = [...Array(totalDays)].map(() => day.add(1, "day").clone());
-
-  const daysOfWeek = (index: number) =>
-    moment()
-      .day(index + 1)
-      .format("ddd");
-
-  const isCurrentDay = (day: any) => moment().isSame(day, "day");
-  const isSelectedMonth = (day: any) => displayedDate.isSame(day, "month");
-
   return (
     <>
       <CalendarContainer isHeader>
-        {[...Array(7)].map((_, i) => (
-          <CellWrapper isSelectedMonth isHeader key={i}>
-            {daysOfWeek(i)}
-          </CellWrapper>
-        ))}
+        <CalendarHeader />
       </CalendarContainer>
       <CalendarContainer>
-        {daysList.map((dayItem) => (
-          <CellWrapper
-            isSelectedMonth={isSelectedMonth(dayItem)}
-            isWeekend={dayItem.day() === 6 || dayItem.day() === 0}
-            key={dayItem.unix()}
-          >
-            <RowInCell>
-              <DayWrapper
-                onClick={() => openCreateEditForm("Create", null, dayItem)}
-              >
-                {isCurrentDay(dayItem) ? (
-                  <CurrentDay>{dayItem.format("D")}</CurrentDay>
-                ) : (
-                  dayItem.format("D")
-                )}
-              </DayWrapper>
-            </RowInCell>
-            {/* <WorldHolidayWrapper>
-            <WorldHoliday>
-              world holiday
-            </WorldHoliday>
-          </WorldHolidayWrapper> */}
-            <EventListWrapper>
-              {events
-                .filter(
-                  (event) =>
-                    event.date >= dayItem.format("X") &&
-                    event.date <= dayItem.clone().endOf("day").format("X")
-                )
-                .slice(0, 2)
-                .map((filtredEvent) => (
-                  <EventItemWrapper key={filtredEvent.id}>
-                    <EventItemTittle
-                      onClick={() => openCreateEditForm("Edit", filtredEvent)}
-                    >
-                      {filtredEvent.title}
-                    </EventItemTittle>
-                  </EventItemWrapper>
-                ))}
-              {/* {events.length > 2 ? (
-                <EventItemWrapper key="show more">
-                  <EventItemTittle
-                   
-                  >
-                    show more...
-                  </EventItemTittle>
-                </EventItemWrapper>
-              ) : null} */}
-            </EventListWrapper>
-          </CellWrapper>
-        ))}
+        <DaysOfMonthList
+          startDay={startDay}
+          totalDays={totalDays}
+          events={events}
+          openCreateEditForm={openCreateEditForm}
+          displayedDate={displayedDate}
+        />
       </CalendarContainer>
     </>
   );

@@ -43,8 +43,8 @@ const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
 
 
   return (
-    <FormPositionWrapper onClick={()=>closeCreateEditForm(false)}>
-        <FormWrapper onClick={e=>e.stopPropagation()}>
+   
+        <FormWrapper>
             <FormEventTitle placeholder='Title' type='text' name={'title'} onChange={handleChange} value={state.title}/>
             <FormEventDescription placeholder='Description' name={'description'}  onChange={handleChange} value={state.description}/>
             <FormButtonsWrapper>
@@ -53,8 +53,21 @@ const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
                 {operationMethod === 'Edit' ? (<FormButton type='button' onClick={()=>removeEventHandler(event?.id)}>Remove</FormButton>) : null}
             </FormButtonsWrapper>
         </FormWrapper>
-    </FormPositionWrapper>
+    
   )
 }
 
 export default FormCreateEdit
+
+
+{/* <FormPositionWrapper onClick={()=>closeCreateEditForm(false)}>
+<FormWrapper onClick={e=>e.stopPropagation()}>
+    <FormEventTitle placeholder='Title' type='text' name={'title'} onChange={handleChange} value={state.title}/>
+    <FormEventDescription placeholder='Description' name={'description'}  onChange={handleChange} value={state.description}/>
+    <FormButtonsWrapper>
+        <FormButton type='button' onClick={()=>closeCreateEditForm(false)}>Cancel</FormButton>
+        <FormButton type='submit' onClick={handleSubmit}>{operationMethod}</FormButton>
+        {operationMethod === 'Edit' ? (<FormButton type='button' onClick={()=>removeEventHandler(event?.id)}>Remove</FormButton>) : null}
+    </FormButtonsWrapper>
+</FormWrapper>
+</FormPositionWrapper> */}

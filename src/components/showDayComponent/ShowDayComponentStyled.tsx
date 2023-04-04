@@ -1,29 +1,25 @@
-import styled from "styled-components";
-import "../../styles/variables.css";
-import { ShadowWrapper } from "../../styledComponents/StyledComponents";
+import styled from 'styled-components';
+import '../../styles/variables.css';
 
-export const FormPositionWrapper = styled.div`
-  position: absolute;
-  z-index: 100;
-  background-color: rgba(0, 0, 0, 0.35);
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+export const ShowDayWrapper = styled('div')`
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-grow: 1;
+  border-top: 1px solid #464648;;
 `;
 
-export const FormWrapper = styled(ShadowWrapper)`
-width: 320px;
-min-width: 320px;
-height: 132px;
-background-color:var(--form-bg-color);
-color:var(--form-color);
-box-shadow:unset;
-border-radius:8px;
-overflow: hidden;
+export const EventFormWrapper = styled('div')`
+  background-color: #27282A;
+  color: #DDDDDD;
+  width: 420px;
+  position: relative;
+  border-left: 1px solid #464648;;
+`;
+export const NoEventMsg = styled('div')`
+  color: #565759;
+  position: absolute;
+  top: 50%;
+  right: 50%;
+  transform: translate(50%,-50%);
 `;
 
 export const FormEventTitle = styled.input`
@@ -73,4 +69,3 @@ padding:8px 14px;
 display:flex;
 justify-content:flex-end;
 `;
-

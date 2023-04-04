@@ -1,18 +1,21 @@
 import React from 'react';
 import { isCurrentDay, isSelectedMonth } from '../../helpers';
-import { CellWrapper, RowInCell } from '../../styledComponents/StyledComponents';
+import { DISPLAYED_MODE_DAY, OPERATION_METHOD_CREATE, OPERATION_METHOD_EDIT } from '../../helpers/constants';
+import { CellWrapper, EventItemTittle, EventItemWrapper, EventListWrapper, RowInCell } from '../../styledComponents/StyledComponents';
 import { IEvent } from '../../types/Interfaces';
-import { CurrentDay, DayWrapper, EventItemTittle, EventItemWrapper, EventListWrapper } from './CalendarCellStyled';
+import { CurrentDay, DayWrapper } from './CalendarCellStyled';
 
 interface ICalendarCell {
-    displayedDate: any;
-    events: IEvent[];
-    openCreateEditForm: any;
-    dayItem:any;
+    displayedDate: any,
+    events: IEvent[],
+    openCreateEditForm: any,
+    dayItem:any,
+    setDisplayedMode:any,
+    openDayMode:any
   }
 
 
-function CalendarCell({dayItem,displayedDate,openCreateEditForm,events}:ICalendarCell) {
+function CalendarCell({dayItem,displayedDate,openCreateEditForm,events,setDisplayedMode,openDayMode}:ICalendarCell) {
   return (
     <>
     <CellWrapper
@@ -22,7 +25,7 @@ function CalendarCell({dayItem,displayedDate,openCreateEditForm,events}:ICalenda
         >
           <RowInCell>
             <DayWrapper
-              onClick={() => openCreateEditForm("Create", null, dayItem)}
+              onClick={() => openCreateEditForm(OPERATION_METHOD_CREATE, null, dayItem)}
             >
               {isCurrentDay(dayItem) ? (
                 <CurrentDay>{dayItem.format("D")}</CurrentDay>
@@ -42,7 +45,7 @@ function CalendarCell({dayItem,displayedDate,openCreateEditForm,events}:ICalenda
               .map((filtredEvent) => (
                 <EventItemWrapper key={filtredEvent.id}>
                   <EventItemTittle
-                    onClick={() => openCreateEditForm("Edit", filtredEvent)}
+                    onClick={() => openCreateEditForm(OPERATION_METHOD_EDIT, filtredEvent,null)}
                   >
                     {filtredEvent.title}
                   </EventItemTittle>
@@ -51,7 +54,7 @@ function CalendarCell({dayItem,displayedDate,openCreateEditForm,events}:ICalenda
             {events.length > 2 ? (
                 <EventItemWrapper key="show more">
                   <EventItemTittle
-                   
+                   onClick={()=>openDayMode(DISPLAYED_MODE_DAY,dayItem)}
                   >
                     show more...
                   </EventItemTittle>

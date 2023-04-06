@@ -1,5 +1,8 @@
 import styled from 'styled-components';
+import { ButtonWrapper, EventItemWrapper } from '../../styledComponents/StyledComponents';
 import '../../styles/variables.css';
+
+
 
 export const ShowDayWrapper = styled('div')`
   display: flex;
@@ -69,3 +72,62 @@ padding:8px 14px;
 display:flex;
 justify-content:flex-end;
 `;
+
+
+export const ScaleWrapper = styled('ul')`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0 4px;
+  position: relative;
+  list-style:none;
+  color:var(--form-input-color);
+`;
+
+export const ScaleCellWrapper = styled('li')`
+  flex-grow: 1;
+  position: relative;
+  &:not(:last-child){
+    border-bottom: 1px solid #464648;
+  }
+  margin-left: 32px;
+`;
+
+export const ScaleCellTimeWrapper = styled('div')`
+  position: absolute;
+  left: -26px;
+  top: -6px;
+  font-size: 8px;
+`;
+
+export const ScaleCellEventWrapper = styled('ul')`
+  display:flex;
+  flex-wrap:wrap;
+  list-style:none;
+  min-height: 20px;
+ width:500px;
+`;
+
+export const ScaleCellEventItemWrapper = styled(EventItemWrapper)`
+width:80px
+`;
+
+export const EventsWrapper =styled.div`
+width:100%;
+display:flex;
+flex-direction:column;
+list-style: none;
+background-color: #1E1F21;
+`;
+
+export const CreateButtonWrapper = styled(ButtonWrapper)`
+  position: absolute;
+  top: 45%;
+  right: 50%;
+  transform: translate(50%,-50%);
+`;
+
+
+
+
+

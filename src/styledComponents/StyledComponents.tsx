@@ -13,6 +13,9 @@ type CellWrapperProps = {
     pressed?:boolean,
 }
 
+type EventItemTittleProps ={
+  globalHoloday?:boolean,
+}
 
 
 export const ShadowWrapper = styled.div`
@@ -48,21 +51,21 @@ export const EventListWrapper =styled.ul`
 width:100%;
 display:flex;
 flex-direction:column;
-align-items:center;
+// align-items:center;
 // justify-content:center;
 list-style: none;
 background-color: #1E1F21;
 `;
 
 export const EventItemWrapper = styled.li`
-width:100%;
+// width:100%;
 display:flex;
 padding-left:2px;
 padding-right:2px;
 margin-bottom:2px;
 `;
 
-export const EventItemTittle =styled.button`
+export const EventItemTittle =styled.button<EventItemTittleProps>`
 position:relative;
 flex-grow:1;
 text-overflow:ellipsis;
@@ -76,12 +79,12 @@ cursor:pointer;
 margin:0;
 padding:0;
 text-align:left;
-background-color:var(--eventTitle-bg-color);
+background-color:${props=>props.globalHoloday ? 'var(--holidayEvent-bg-color)':'var(--eventTitle-bg-color)'};
 border:1px solid var(--eventTitle-bg-color);
 border-radius:2px;
 
 &:hover,:focus{
-  background-color:var( --button-bg-hover); 
+  background-color:${props=>props.globalHoloday ? 'var(--holidayEvent-bg-hover-color)':'var( --button-bg-hover)'}; 
   }
   
 `;
@@ -101,4 +104,42 @@ background-color:var( --button-bg-hover);
 &:not(:last-child){
 margin-right:2px;
 }
+`;
+
+export const WorldHolidayWrapper = styled.ul`
+width:100%;
+display:flex;
+flex-direction:column;
+list-style: none;
+
+`;
+
+export const WorldHolidayItem = styled.li`
+display:flex;
+padding-left:2px;
+padding-right:2px;
+margin-bottom:2px;
+`;
+
+export const WorldHolidayText = styled.button`
+position:relative;
+flex-grow:1;
+text-overflow:ellipsis;
+overflow:hidden;
+white-space:nowrap;
+width:114px;
+border:unset;
+background:unset;
+color:var(--eventTittle-color);
+cursor:pointer;
+margin:0;
+padding:0;
+text-align:left;
+background-color:var(--holidayEvent-bg-color);
+border:1px solid var(--eventTitle-bg-color);
+border-radius:2px;
+
+&:hover,:focus{
+  background-color:var(--holidayEvent-bg-hover-color); 
+  }
 `;

@@ -3,91 +3,129 @@ import moment from "moment";
 import Header from "../header/Header";
 import Monitor from "../monitor/Monitor";
 import Calendar from "../calendar/Calendar";
-
-import { IEvent } from "../../types/Interfaces";
+import { v4 as uuidv4 } from "uuid";
+import { IEvent,IGlobalHoliday } from "../../types/Interfaces";
 import FormCreateEdit from "../formCreateEdit/FormCreateEdit";
 import {
   DISPLAYED_MODE_DAY,
   DISPLAYED_MODE_MONTH,
-} from "../../helpers/constants";
+  } from "../../helpers/constants";
 import ShowDayComponent from "../showDayComponent/ShowDayComponent";
 import { ShadowWrapper } from "../../styledComponents/StyledComponents";
 import Modal from "../modal/Modal";
 
-const url = "http://localhost:5000";
+
+const url = "https://calendar-server-omoskalyk.herokuapp.com";
+const globalHolidaysUrl = "https://date.nager.at/api/v3/publicholidays";
 const totalDays = 42;
+const countryCode = "UA";
 window.moment = moment;
+
+const initialEvent = {
+  id: "",
+  title: "",
+  description: "",
+  date: "",
+};
 
 function App() {
   moment.updateLocale("en", { week: { dow: 1 } });
 
-  const [displayedDate, setDisplayedDate] = useState(moment());
-  const [displayedMode, setDisplayedMode] = useState(DISPLAYED_MODE_MONTH);
+  const [displayedDate, setDisplayedDate] = useState<moment.Moment>(moment());
+  const [displayedMode, setDisplayedMode] = useState<string>(DISPLAYED_MODE_MONTH);
   const [events, setEvents] = useState<IEvent[]>([]);
-  const [event, setEvent] = useState<IEvent | null>(null);
-  const [showForm, setShowForm] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [operationMethod, setOperationMethod] = useState("");
-  const [certainDay, setCertainDay] = useState("");
+  const [event, setEvent] = useState<IEvent>(initialEvent);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [operationMethod, setOperationMethod] = useState<string>("");
+  const [certainDay, setCertainDay] = useState<any>("");
+  const [globalHolidays, setGlobalHolidays] = useState<IGlobalHoliday[]>([]);
 
-  // const today = moment();
-  // const endDay = moment().endOf('month').endOf('week');
+  const currentYear = moment().format("YYYY");
 
   const startDay = displayedDate.clone().startOf("month").startOf("week");
 
   const startDayQuery = startDay.clone().format("X");
+
   const endDayQuery = startDay.clone().add(totalDays, "days").format("X");
 
-  const prevHandler = () =>
-    setDisplayedDate((prev) =>
+  useEffect(() => {
+    fetch(`${url}/events?date_gte=${startDayQuery}&date_lte=${endDayQuery}`)
+      .then((res) => res.json())
+      .then((res) => {
+        setEvents(res);
+      }).catch((error)=>console.log(error));
+
+    fetch(`${globalHolidaysUrl}/${currentYear}/${countryCode}`)
+      .then((res) => res.json())
+      .then((res) => {
+        const formattedRes = res.map((item: any) => {
+          const timeStamp = moment(item.date).unix().toString();
+
+          const result = {
+            title: item.name,
+            id: uuidv4(),
+            description: item.localName,
+            date: timeStamp,
+            globalHoliday:true,
+          };
+
+          return result;
+        });
+        
+        setGlobalHolidays(formattedRes);
+      }).catch((error)=>console.log(error));
+  }, [startDayQuery, endDayQuery, currentYear]);
+
+  const prevHandler = ():void =>
+    setDisplayedDate((prev:moment.Moment) =>
       prev.clone().subtract(1, displayedMode === "month" ? "month" : "day")
     );
 
-  const todayHandler = () => setDisplayedDate(moment());
+  const todayHandler = ():void => setDisplayedDate(moment());
 
-  const nextHandler = () =>
-    setDisplayedDate((prev) =>
+  const nextHandler = ():void =>
+    setDisplayedDate((prev:moment.Moment) =>
       prev.clone().add(1, displayedMode === "month" ? "month" : "day")
     );
 
-  const toggleCreateEditFormInModal = (value:boolean) => setShowModal(value);
+  const toggleCreateEditFormInModal = (value: boolean):void => setShowModal(value);
 
-  const toggleForm = (value:boolean) => setShowForm(value);
+  const toggleForm = (value: boolean):void => setShowForm(value);
 
   const openCreateEditForm = (
-    method:string ,
-    eventForEdit: IEvent,
-    day: string
-  ) => {
+    method: string,
+    eventForEdit: IEvent | null,
+    day: string |  moment.Moment
+  ):void => {
     setOperationMethod(method);
-    setEvent(eventForEdit);
+    if (eventForEdit) {
+      setEvent(eventForEdit);
+    }
     setCertainDay(day);
     toggleForm(true);
   };
 
   const openCreateEditFormInModal = (
-    method:string ,
-    eventForEdit: IEvent,
-    day: string
-  ) => {
-    openCreateEditForm(method,eventForEdit,day);
+    method: string,
+    eventForEdit: IEvent | null,
+    day: string | moment.Moment
+  ):void => {
+    openCreateEditForm(method, eventForEdit, day);
     toggleCreateEditFormInModal(true);
   };
 
-  const closeCreateEditForm = () => {
-    setEvent(null);
+  const closeCreateEditForm = ():void => {
+    setEvent(initialEvent);
     setCertainDay("");
-    toggleCreateEditFormInModal(false); 
+    toggleCreateEditFormInModal(false);
     toggleForm(false);
   };
 
-  const openDayMode = (mode:string, date:any) => {
-
+  const openDayMode = (mode: string, date: moment.Moment) => {
     setDisplayedMode(mode);
-    setDisplayedDate(date)
-  }
-
-
+    setDisplayedDate(date);
+  };
 
   const submitCreateEditForm = (preparedEvent: IEvent) => {
     const fetchUrl =
@@ -115,13 +153,13 @@ function App() {
           setEvents((prevState) => [...prevState, res] as IEvent[]);
         }
 
-        closeCreateEditForm();
-      });
+       
+      })
+      .catch((error)=>console.log(error));
+      closeCreateEditForm();
   };
 
-
-
-  const removeEventHandler = (eventId: any) => {
+  const removeEventHandler = (eventId: string) => {
     const fetchUrl = `${url}/events/${eventId}`;
     const httpMethod = "DELETE";
     fetch(fetchUrl, {
@@ -139,14 +177,6 @@ function App() {
         closeCreateEditForm();
       });
   };
-
-  useEffect(() => {
-    fetch(`${url}/events?date_gte=${startDayQuery}&date_lte=${endDayQuery}`)
-      .then((res) => res.json())
-      .then((res) => {
-        setEvents(res);
-      });
-  }, [startDayQuery, endDayQuery]);
 
   return (
     <>
@@ -174,8 +204,8 @@ function App() {
         />
         {displayedMode === DISPLAYED_MODE_MONTH ? (
           <Calendar
-          openDayMode={openDayMode}
-            setDisplayedMode={setDisplayedMode}
+            globalHolidays={globalHolidays}
+            openDayMode={openDayMode}
             openCreateEditForm={openCreateEditFormInModal}
             events={events}
             totalDays={totalDays}
@@ -186,9 +216,10 @@ function App() {
 
         {displayedMode === DISPLAYED_MODE_DAY ? (
           <ShowDayComponent
-          showForm={showForm}
-          openCreateEditForm={openCreateEditForm}
+            showForm={showForm}
+            openCreateEditForm={openCreateEditForm}
             events={events}
+            globalHolidays={globalHolidays}
             displayedDate={displayedDate}
             selectedEvent={event}
             removeEventHandler={removeEventHandler}
@@ -199,6 +230,7 @@ function App() {
           />
         ) : null}
       </ShadowWrapper>
+      
     </>
   );
 }

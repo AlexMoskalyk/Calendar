@@ -4,11 +4,11 @@ import { ButtonWrapper } from '../../styledComponents/StyledComponents';
 import {MonitorContainer,YearWrapper,MonthWrapper,TodayButton, DayWrapper} from './MonitorStyled'
 
 type  MonitorProps = {
-  displayedDate:any,
-  prevHandler:any,
-  todayHandler:any,
-  nextHandler:any,
-  setDisplayedMode:any,
+  displayedDate:moment.Moment,
+  prevHandler:()=>void,
+  todayHandler:()=>void,
+  nextHandler:()=>void,
+  setDisplayedMode:(value:string)=>void,
   displayedMode:string,
 }
 

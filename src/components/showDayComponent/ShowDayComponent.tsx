@@ -1,31 +1,41 @@
 import React from "react";
-import { isDayContainCurrentEvent } from "../../helpers";
-import { IEvent } from "../../types/Interfaces";
+import { isDayContainCurrentEvent, isEventGlobalHoliday } from "../../helpers";
+import { IEvent,IGlobalHoliday } from "../../types/Interfaces";
+import moment from 'moment';
 import {
-  ButtonWrapper,
   EventItemTittle,
-  EventItemWrapper,
-  EventListWrapper,
-} from "../../styledComponents/StyledComponents";
+  } from "../../styledComponents/StyledComponents";
 import {
+  CreateButtonWrapper,
   EventFormWrapper,
+  EventsWrapper,
   NoEventMsg,
+  ScaleCellEventItemWrapper,
+  ScaleCellEventWrapper,
+  ScaleCellTimeWrapper,
+  ScaleCellWrapper,
+  ScaleWrapper,
   ShowDayWrapper,
 } from "./ShowDayComponentStyled";
 import FormCreateEdit from "../formCreateEdit/FormCreateEdit";
-import { OPERATION_METHOD_CREATE, OPERATION_METHOD_EDIT } from "../../helpers/constants";
+import { ITEMS_PER_DAY, OPERATION_METHOD_CREATE, OPERATION_METHOD_EDIT } from "../../helpers/constants";
 
 interface IShowDayComponent {
-  events: IEvent[];
-  displayedDate: any;
-  selectedEvent: IEvent | null;
-  removeEventHandler:any;
-  certainDay:any;
-  closeCreateEditForm:any;
+  events: IEvent[] ;
+  displayedDate:moment.Moment;
+  selectedEvent: IEvent;
+  removeEventHandler:(id:string)=>void;
+  certainDay:moment.Moment;
+  closeCreateEditForm:()=>void;
   operationMethod:string;
-  submitCreateEditForm:any;
-  openCreateEditForm:any;
+  submitCreateEditForm:(event:IEvent)=>void;
+  openCreateEditForm:
+  (method: string,
+  eventForEdit: IEvent | null,
+  day: string | moment.Moment
+) => void,
   showForm:boolean;
+  globalHolidays:IGlobalHoliday[];
  }
 
 function ShowDayComponent({
@@ -39,21 +49,72 @@ function ShowDayComponent({
   submitCreateEditForm,
   openCreateEditForm,
   showForm,
+  globalHolidays
   }: IShowDayComponent) {
-  const filtredEventList = events.filter((event) =>
-    isDayContainCurrentEvent(event, displayedDate)
-  );
+
+  const filtredEventList = events.filter((event) =>{
+   const result = isDayContainCurrentEvent(event, displayedDate);
+   return result
+  });
+
+  const filtredGlobalHolidays = globalHolidays.filter((item:any)=>{
+   const result = isDayContainCurrentEvent(item,displayedDate);
+   return result
+  })
+
+
+  const cells = [...new Array(ITEMS_PER_DAY)].map((_, i) => {
+    const formattedEventArray: IEvent[]  = [];
+    const formattedGlobalHolidayArray: IGlobalHoliday[]  = [];
+    
+
+    filtredEventList.forEach((event) => {
+      if (+moment.unix(+event.date).format('H') === i) {
+        formattedEventArray.push(event);
+      }
+    });
+    filtredGlobalHolidays.forEach((item:any) => {
+      if (+moment.unix(+item.date).format('H') === i) {
+        formattedGlobalHolidayArray.push(item);
+      }
+    });
+
+    const result = [...formattedEventArray,...formattedGlobalHolidayArray];
+    return result;
+  });
+
+
   return (
     <ShowDayWrapper>
-      <EventListWrapper>
-        {filtredEventList.map((event) => (
-          <EventItemWrapper key={event.id}>
-            <EventItemTittle onClick={() => openCreateEditForm(OPERATION_METHOD_EDIT,event,null)}>
-              {event.title}
-            </EventItemTittle>
-          </EventItemWrapper>
-        ))}
-      </EventListWrapper>
+      <EventsWrapper>
+        <ScaleWrapper>
+        {
+          cells.map((eventList,i)=>(
+            <ScaleCellWrapper key={i}>
+              <ScaleCellTimeWrapper >
+                {
+                  i ? (<>
+                  {`${i}`.padStart(2,'0')}:00
+                  </>) : null
+                }
+                </ScaleCellTimeWrapper>
+              <ScaleCellEventWrapper>
+                {
+                  eventList.map((event: IGlobalHoliday | IEvent)=>(
+                    <ScaleCellEventItemWrapper key={event.id}>
+                      <EventItemTittle globalHoloday={isEventGlobalHoliday(event) ? true :false} onClick={() => openCreateEditForm(OPERATION_METHOD_EDIT,event,'')}>
+                      { event.title }
+                      </EventItemTittle>
+                    </ScaleCellEventItemWrapper>
+                  ))
+                }
+                  </ScaleCellEventWrapper>
+            </ScaleCellWrapper>
+          ))
+        }
+        </ScaleWrapper>
+        
+      </EventsWrapper>
       <EventFormWrapper>
         {showForm ? (
           <div>
@@ -68,9 +129,9 @@ function ShowDayComponent({
           </div>
         ) : (
           <>
-          <ButtonWrapper onClick={()=>openCreateEditForm(OPERATION_METHOD_CREATE,null,displayedDate)}>
+          <CreateButtonWrapper onClick={()=>openCreateEditForm(OPERATION_METHOD_CREATE,null,displayedDate)}>
             Create
-          </ButtonWrapper>
+          </CreateButtonWrapper>
           <NoEventMsg>No event selected</NoEventMsg>
           </>
         )}
@@ -80,39 +141,3 @@ function ShowDayComponent({
 }
 
 export default ShowDayComponent;
-
-{
-  /*            
-            <FormEventTitle
-              placeholder="Title"
-              type="text"
-              name={"title"}
-              onChange={handleChange}
-              value={state.title}
-            />
-            <FormEventDescription
-              placeholder="Description"
-              name={"description"}
-              onChange={handleChange}
-              value={state.description}
-            />
-            <FormButtonsWrapper>
-              <FormButton
-                type="button"
-                onClick={() => closeCreateEditForm(false)}
-              >
-                Cancel
-              </FormButton>
-              <FormButton type="submit" onClick={handleSubmit}>
-                {operationMethod}
-              </FormButton>
-              {operationMethod === "Edit" ? (
-                <FormButton
-                  type="button"
-                  onClick={() => removeEventHandler(event?.id)}
-                >
-                  Remove
-                </FormButton>
-              ) : null}
-            </FormButtonsWrapper> */
-}

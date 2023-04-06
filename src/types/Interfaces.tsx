@@ -1,6 +1,14 @@
 export interface IEvent {
-    id:number,
+    id:string,
     title:string,
     description:string,
-    date:number
+    date:string
+}
+
+export interface IGlobalHoliday {
+    id:string,
+    title:string,
+    description:string,
+    date:string,
+    globalHoliday:boolean
 }

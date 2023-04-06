@@ -1,0 +1,37 @@
+:root{
+    --cell-bg-color:#1E1F21;
+    --cell-weekend-bg-color:#272829;
+    --cell-color:white;
+    --cell-notSelectedMonth-color:#555759;
+    --grid-color:grey;
+    --currentDay-bg-color:red;
+    --currentDay-color:black;
+
+    --eventTittle-color:#DDDDDD;
+    --eventTitle-bg-color:#5d5f63;
+
+    --holidayEvent-bg-color:#234d13;
+    --holidayEvent-bg-hover-color:#0b1906;
+
+
+
+    --button-bg-color:#565759;
+    --button-text-color:#E6e6e6;
+    --button-bg-hover:#737374;
+    --pressed-button-bg-color:#27282A;
+    --pressed-button-color:#a4a6a9;
+
+    --header-bg-color:#2e2e2e;
+
+    --form-bg-color:#1E1F21;
+    --form-color:#DDDDD;
+    --form-input-bg-color:#1E1F21;
+    --form-input-color:#DDDDDD;
+    --form-input-border-color:#464648;
+
+    
+
+
+    
+
+}

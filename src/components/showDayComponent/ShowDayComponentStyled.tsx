@@ -2,6 +2,13 @@ import styled from 'styled-components';
 import { ButtonWrapper, EventItemWrapper } from '../../styledComponents/StyledComponents';
 import '../../styles/variables.css';
 
+type ScaleCellEventItemWrapperProps = {
+  left?:number,
+  width?:number,
+  height?:number,
+  top?:number,
+}
+
 
 
 export const ShowDayWrapper = styled('div')`
@@ -108,8 +115,16 @@ export const ScaleCellEventWrapper = styled('ul')`
  width:500px;
 `;
 
-export const ScaleCellEventItemWrapper = styled(EventItemWrapper)`
-width:80px
+export const ScaleCellEventItemWrapper = styled('div')<ScaleCellEventItemWrapperProps>`
+display:flex;
+padding-left:2px;
+padding-right:2px;
+margin-bottom:2px;
+height: ${props=>props.height}px;
+width:${props=>props.width}px;
+position:absolute;
+top: ${props=>props.top}px;
+left: ${props => props.left}px;
 `;
 
 export const EventsWrapper =styled.div`

@@ -13,6 +13,8 @@ import {
 import ShowDayComponent from "../showDayComponent/ShowDayComponent";
 import { ShadowWrapper } from "../../styledComponents/StyledComponents";
 import Modal from "../modal/Modal";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 
 
 const url = "https://calendar-server-omoskalyk.herokuapp.com";
@@ -26,6 +28,7 @@ const initialEvent = {
   title: "",
   description: "",
   date: "",
+  duration: "",
 };
 
 function App() {
@@ -68,6 +71,7 @@ function App() {
             description: item.localName,
             date: timeStamp,
             globalHoliday:true,
+            duration:'24'
           };
 
           return result;
@@ -179,9 +183,9 @@ function App() {
   };
 
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       {showModal ? (
-        <Modal closeCreateEditForm={closeCreateEditForm}>
+        <Modal closeModal={closeCreateEditForm}>
           <FormCreateEdit
             removeEventHandler={removeEventHandler}
             certainDay={certainDay}
@@ -231,7 +235,7 @@ function App() {
         ) : null}
       </ShadowWrapper>
       
-    </>
+    </LocalizationProvider>
   );
 }
 

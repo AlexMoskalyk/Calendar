@@ -18,7 +18,7 @@ import {
   ShowDayWrapper,
 } from "./ShowDayComponentStyled";
 import FormCreateEdit from "../formCreateEdit/FormCreateEdit";
-import { ITEMS_PER_DAY, OPERATION_METHOD_CREATE, OPERATION_METHOD_EDIT } from "../../helpers/constants";
+import { HOURS_PER_DAY, OPERATION_METHOD_CREATE, OPERATION_METHOD_EDIT } from "../../helpers/constants";
 
 interface IShowDayComponent {
   events: IEvent[] ;
@@ -63,7 +63,7 @@ function ShowDayComponent({
   })
 
 
-  const cells = [...new Array(ITEMS_PER_DAY)].map((_, i) => {
+  const cells = [...new Array(HOURS_PER_DAY)].map((_, i) => {
     const formattedEventArray: IEvent[]  = [];
     const formattedGlobalHolidayArray: IGlobalHoliday[]  = [];
     

@@ -10,13 +10,13 @@ import {
   ListOfHours,
   HoursButton,
   HolidayText,
-  DatePickerWrapper
+  DatePickerWrapper,
 } from "./FormCreateEditStyled";
 import { IEvent, IGlobalHoliday } from "../../types/Interfaces";
 import { v4 as uuidv4 } from "uuid";
 import { HOURS_PER_DAY } from "../../helpers/constants";
 import moment from "moment";
-import { isEventGlobalHoliday } from "../../helpers";
+import { isEventGlobalHoliday, prepareDate } from "../../helpers";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { DateCalendar } from "@mui/x-date-pickers";
 
@@ -62,7 +62,7 @@ function FormCreateEdit({
 
   const setTimeForEvent = (i: number) => {
     setShowTimePicker(false);
-    const time = moment.unix(+state.time).hour(i).format('X');
+    const time = moment.unix(+state.time).hour(i).format("X");
     setState((prevState) => ({ ...prevState, time: time }));
   };
 
@@ -72,18 +72,11 @@ function FormCreateEdit({
     setState((prevState) => ({ ...prevState, duration: durationTime }));
   };
 
-  const setDayForEvent = (value:any) => {
+  const setDayForEvent = (value: any) => {
     setShowDatePicker(false);
-    const formatedValue = moment(value).format('X');
+    const formatedValue = moment(value).format("X");
     setState((prevState) => ({ ...prevState, day: formatedValue }));
-    }
-
-   function prepareDate(day: number, time: number) {
-    // Combine the day and time into a single moment object
-    const dateTime = moment.unix(day).hour(moment.unix(time).hour()).minute(moment.unix(time).minute()).format('X');
-  
-    return dateTime;
-  }
+  };
 
   const handleSubmit: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -91,18 +84,14 @@ function FormCreateEdit({
 
     const dateInMilliseconds = prepareDate(day, time).toString();
 
-    
     const preparedEvent = {
       id: id ? id : uuidv4(),
       title,
       description,
       duration,
-      date:dateInMilliseconds,
-
+      date: dateInMilliseconds,
     };
 
-    
-    
     submitCreateEditForm(preparedEvent);
   };
 
@@ -129,7 +118,7 @@ function FormCreateEdit({
           />
           <SelectEventTimeWrapper>
             <PositionRelative>
-              <FormButton onClick={()=>setShowDatePicker(true)}>
+              <FormButton onClick={() => setShowDatePicker(true)}>
                 {moment.unix(+state?.day).format("dddd, D MMMM")}
               </FormButton>
               <FormButton onClick={() => setShowTimePicker(true)}>
@@ -168,7 +157,10 @@ function FormCreateEdit({
                 <DatePickerWrapper>
                   <DemoContainer components={["DateCalendar"]}>
                     <DemoItem>
-                      <DateCalendar defaultValue={moment()}  onChange={(newValue) => setDayForEvent(newValue)}/>
+                      <DateCalendar
+                        defaultValue={moment()}
+                        onChange={(newValue) => setDayForEvent(newValue)}
+                      />
                     </DemoItem>
                   </DemoContainer>
                 </DatePickerWrapper>

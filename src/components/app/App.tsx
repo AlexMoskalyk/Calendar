@@ -86,6 +86,7 @@ function App() {
       prev.clone().subtract(1, displayedMode === "month" ? "month" : "day")
     );
 
+
   const todayHandler = ():void => setDisplayedDate(moment());
 
   const nextHandler = ():void =>
@@ -163,6 +164,32 @@ function App() {
       closeCreateEditForm();
   };
 
+
+  const updateEventAfterDrop = (preparedEvent: IEvent) => {
+    const fetchUrl = `${url}/events/${preparedEvent.id}`
+      
+    const httpMethod = "PATCH" ;
+
+    fetch(fetchUrl, {
+      method: httpMethod,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(preparedEvent),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setEvents((prevState) =>
+            prevState.map((eventItem) =>
+              eventItem.id === res.id ? res : eventItem
+            )
+          );
+
+       
+      })
+      .catch((error)=>console.log(error));
+      };
+
   const removeEventHandler = (eventId: string) => {
     const fetchUrl = `${url}/events/${eventId}`;
     const httpMethod = "DELETE";
@@ -208,6 +235,7 @@ function App() {
         />
         {displayedMode === DISPLAYED_MODE_MONTH ? (
           <Calendar
+          updateEventAfterDrop={updateEventAfterDrop}
             globalHolidays={globalHolidays}
             openDayMode={openDayMode}
             openCreateEditForm={openCreateEditFormInModal}

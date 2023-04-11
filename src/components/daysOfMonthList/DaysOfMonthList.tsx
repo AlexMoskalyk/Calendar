@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { isDayContainCurrentEvent } from "../../helpers";
 import { IEvent, IGlobalHoliday } from "../../types/Interfaces";
 import CalendarCell from "../calendarCell/CalendarCell";
@@ -13,12 +13,13 @@ interface IDaysOfMonthList {
     eventForEdit: IEvent | null,
     day: string | moment.Moment
   ) => void,
-  
+  updateEventAfterDrop:(preparedEvent: IEvent)=>void;
   openDayMode:(mode: string, date: moment.Moment) => void,
   globalHolidays:IGlobalHoliday[],
 }
 
 function DaysOfMonthList({
+  updateEventAfterDrop,
   startDay,
   totalDays,
   events,
@@ -29,11 +30,18 @@ function DaysOfMonthList({
 }: IDaysOfMonthList) {
   const day = startDay.clone().subtract(1, "day");
   const daysList = [...new Array(totalDays)].map(() => day.add(1, "day").clone());
+  const [dayDropped, setDayDropped] = useState<moment.Moment | string>('');
+  const [draggedEvent, setDraggedEvent] = useState<IGlobalHoliday | IEvent | null>(null);
 
   return (
     <>
       {daysList.map((dayItem) => (
         <CalendarCell
+        draggedEvent={draggedEvent}
+        setDraggedEvent={setDraggedEvent}
+        dayDropped={dayDropped}
+        setDayDropped={setDayDropped}
+        updateEventAfterDrop={updateEventAfterDrop}
         key={dayItem.format('YYYY-MM-DD')}
         globalHolidays={globalHolidays.filter((item:any)=>isDayContainCurrentEvent(item,dayItem))}
          openDayMode={openDayMode}

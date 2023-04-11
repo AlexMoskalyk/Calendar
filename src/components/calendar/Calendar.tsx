@@ -6,27 +6,29 @@ import CalendarHeader from "../calendarHeader/CalendarHeader";
 import DaysOfMonthList from "../daysOfMonthList/DaysOfMonthList";
 
 type CalendarProps = {
-  startDay: moment.Moment,
-  displayedDate: moment.Moment,
-  totalDays: number,
-  events: IEvent[],
+  startDay: moment.Moment;
+  displayedDate: moment.Moment;
+  totalDays: number;
+  events: IEvent[];
   openCreateEditForm: (
     method: string,
     eventForEdit: IEvent | null,
     day: string | moment.Moment
-  ) => void,
-    openDayMode:(mode: string, date: moment.Moment) => void,
-  globalHolidays:IGlobalHoliday[],
+  ) => void;
+  openDayMode: (mode: string, date: moment.Moment) => void;
+  globalHolidays: IGlobalHoliday[];
+  updateEventAfterDrop:(preparedEvent: IEvent)=>void;
 };
 
 function Calendar({
+  updateEventAfterDrop,
   openDayMode,
   startDay,
   displayedDate,
   totalDays,
   events,
   openCreateEditForm,
- globalHolidays
+  globalHolidays,
 }: CalendarProps) {
   return (
     <>
@@ -35,9 +37,10 @@ function Calendar({
       </CalendarContainer>
       <CalendarContainer>
         <DaysOfMonthList
-        globalHolidays={globalHolidays}
-        openDayMode={openDayMode}
-                  startDay={startDay}
+        updateEventAfterDrop={updateEventAfterDrop}
+          globalHolidays={globalHolidays}
+          openDayMode={openDayMode}
+          startDay={startDay}
           totalDays={totalDays}
           events={events}
           openCreateEditForm={openCreateEditForm}

@@ -31,12 +31,14 @@ function Calendar({
   globalHolidays,
 }: CalendarProps) {
   return (
-    <>
+    <div id={"calendar"}>
       <CalendarContainer isHeader>
         <CalendarHeader />
       </CalendarContainer>
-      <CalendarContainer>
+      <CalendarContainer
+      >
         <DaysOfMonthList
+        
         updateEventAfterDrop={updateEventAfterDrop}
           globalHolidays={globalHolidays}
           openDayMode={openDayMode}
@@ -47,7 +49,7 @@ function Calendar({
           displayedDate={displayedDate}
         />
       </CalendarContainer>
-    </>
+    </div>
   );
 }
 

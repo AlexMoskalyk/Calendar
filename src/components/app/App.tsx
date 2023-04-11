@@ -13,6 +13,9 @@ import {
 import ShowDayComponent from "../showDayComponent/ShowDayComponent";
 import { ShadowWrapper } from "../../styledComponents/StyledComponents";
 import Modal from "../modal/Modal";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import html2canvas from 'html2canvas';
 
 
 const url = "https://calendar-server-omoskalyk.herokuapp.com";
@@ -26,6 +29,7 @@ const initialEvent = {
   title: "",
   description: "",
   date: "",
+  duration: "",
 };
 
 function App() {
@@ -68,6 +72,7 @@ function App() {
             description: item.localName,
             date: timeStamp,
             globalHoliday:true,
+            duration:'24'
           };
 
           return result;
@@ -81,6 +86,7 @@ function App() {
     setDisplayedDate((prev:moment.Moment) =>
       prev.clone().subtract(1, displayedMode === "month" ? "month" : "day")
     );
+
 
   const todayHandler = ():void => setDisplayedDate(moment());
 
@@ -127,6 +133,32 @@ function App() {
     setDisplayedDate(date);
   };
 
+  const handleDownload = () => {
+    // Get the calendar element by its ID
+    const calendar = document.getElementById('calendar');
+  
+    // Generate the image of the calendar
+    if(calendar){
+      html2canvas(calendar, { useCORS: true })
+      .then((canvas) => {
+        // Convert the canvas to a PNG data URL
+        const dataURL = canvas.toDataURL('image/png');
+  
+        // Create a link and click it to download the image
+        const link = document.createElement('a');
+        link.download = 'calendar.png';
+        link.href = dataURL;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    }
+    
+  };
+
   const submitCreateEditForm = (preparedEvent: IEvent) => {
     const fetchUrl =
       operationMethod === "Edit"
@@ -159,6 +191,32 @@ function App() {
       closeCreateEditForm();
   };
 
+
+  const updateEventAfterDrop = (preparedEvent: IEvent) => {
+    const fetchUrl = `${url}/events/${preparedEvent.id}`
+      
+    const httpMethod = "PATCH" ;
+
+    fetch(fetchUrl, {
+      method: httpMethod,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(preparedEvent),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setEvents((prevState) =>
+            prevState.map((eventItem) =>
+              eventItem.id === res.id ? res : eventItem
+            )
+          );
+
+       
+      })
+      .catch((error)=>console.log(error));
+      };
+
   const removeEventHandler = (eventId: string) => {
     const fetchUrl = `${url}/events/${eventId}`;
     const httpMethod = "DELETE";
@@ -179,9 +237,9 @@ function App() {
   };
 
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
       {showModal ? (
-        <Modal closeCreateEditForm={closeCreateEditForm}>
+        <Modal closeModal={closeCreateEditForm}>
           <FormCreateEdit
             removeEventHandler={removeEventHandler}
             certainDay={certainDay}
@@ -193,7 +251,7 @@ function App() {
         </Modal>
       ) : null}
       <ShadowWrapper>
-        <Header />
+        <Header handleDownload={handleDownload}/>
         <Monitor
           prevHandler={prevHandler}
           todayHandler={todayHandler}
@@ -204,6 +262,8 @@ function App() {
         />
         {displayedMode === DISPLAYED_MODE_MONTH ? (
           <Calendar
+          
+          updateEventAfterDrop={updateEventAfterDrop}
             globalHolidays={globalHolidays}
             openDayMode={openDayMode}
             openCreateEditForm={openCreateEditFormInModal}
@@ -231,7 +291,7 @@ function App() {
         ) : null}
       </ShadowWrapper>
       
-    </>
+    </LocalizationProvider>
   );
 }
 

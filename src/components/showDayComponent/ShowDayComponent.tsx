@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { isDayContainCurrentEvent, isEventGlobalHoliday } from "../../helpers";
-import { IEvent,IGlobalHoliday } from "../../types/Interfaces";
-import moment from 'moment';
-import {
-  EventItemTittle,
-  } from "../../styledComponents/StyledComponents";
+import { IEvent, IGlobalHoliday } from "../../types/Interfaces";
+import moment from "moment";
+import { EventItemTittle } from "../../styledComponents/StyledComponents";
 import {
   CreateButtonWrapper,
   EventFormWrapper,
@@ -18,25 +16,30 @@ import {
   ShowDayWrapper,
 } from "./ShowDayComponentStyled";
 import FormCreateEdit from "../formCreateEdit/FormCreateEdit";
-import { ITEMS_PER_DAY, OPERATION_METHOD_CREATE, OPERATION_METHOD_EDIT } from "../../helpers/constants";
+import {
+  eventWidth,
+  HOURS_PER_DAY,
+  OPERATION_METHOD_CREATE,
+  OPERATION_METHOD_EDIT,
+} from "../../helpers/constants";
 
 interface IShowDayComponent {
-  events: IEvent[] ;
-  displayedDate:moment.Moment;
+  events: IEvent[];
+  displayedDate: moment.Moment;
   selectedEvent: IEvent;
-  removeEventHandler:(id:string)=>void;
-  certainDay:moment.Moment;
-  closeCreateEditForm:()=>void;
-  operationMethod:string;
-  submitCreateEditForm:(event:IEvent)=>void;
-  openCreateEditForm:
-  (method: string,
-  eventForEdit: IEvent | null,
-  day: string | moment.Moment
-) => void,
-  showForm:boolean;
-  globalHolidays:IGlobalHoliday[];
- }
+  removeEventHandler: (id: string) => void;
+  certainDay: moment.Moment;
+  closeCreateEditForm: () => void;
+  operationMethod: string;
+  submitCreateEditForm: (event: IEvent) => void;
+  openCreateEditForm: (
+    method: string,
+    eventForEdit: IEvent | null,
+    day: string | moment.Moment
+  ) => void;
+  showForm: boolean;
+  globalHolidays: IGlobalHoliday[];
+}
 
 function ShowDayComponent({
   events,
@@ -49,71 +52,86 @@ function ShowDayComponent({
   submitCreateEditForm,
   openCreateEditForm,
   showForm,
-  globalHolidays
-  }: IShowDayComponent) {
+  globalHolidays,
+}: IShowDayComponent) {
+  const [heightEventItem, setHeightEventItem] = useState(0);
+  const ref = useRef<HTMLUListElement>(null);
 
-  const filtredEventList = events.filter((event) =>{
-   const result = isDayContainCurrentEvent(event, displayedDate);
-   return result
-  });
+  useEffect(() => {
+    if (ref.current !== null) {
+      setHeightEventItem(ref.current.clientHeight / HOURS_PER_DAY);
+    }
+  }, []);
 
-  const filtredGlobalHolidays = globalHolidays.filter((item:any)=>{
-   const result = isDayContainCurrentEvent(item,displayedDate);
-   return result
-  })
+  const onDragEndHandler = (
+    e: React.DragEvent<HTMLDivElement>,
+    event: IGlobalHoliday | IEvent
+  ) => {
+    console.log(e);
+  };
 
+  const onDropHandler = (e: React.DragEvent<HTMLLIElement>, i: number) => {
+    e.preventDefault();
+    console.log(i);
+  };
+  const onDragOverHandler = (e: React.DragEvent<HTMLLIElement>) => {
+    e.preventDefault();
+  };
 
-  const cells = [...new Array(ITEMS_PER_DAY)].map((_, i) => {
-    const formattedEventArray: IEvent[]  = [];
-    const formattedGlobalHolidayArray: IGlobalHoliday[]  = [];
-    
+  const getTopPosition = (event: IEvent | IGlobalHoliday) => {
+    return heightEventItem * +moment.unix(+event.date).format("H");
+  };
 
-    filtredEventList.forEach((event) => {
-      if (+moment.unix(+event.date).format('H') === i) {
-        formattedEventArray.push(event);
-      }
-    });
-    filtredGlobalHolidays.forEach((item:any) => {
-      if (+moment.unix(+item.date).format('H') === i) {
-        formattedGlobalHolidayArray.push(item);
-      }
-    });
-
-    const result = [...formattedEventArray,...formattedGlobalHolidayArray];
+  const filtredEventList = events.filter((event) => {
+    const result = isDayContainCurrentEvent(event, displayedDate);
     return result;
   });
 
+  const filtredGlobalHolidays = globalHolidays.filter((item: any) => {
+    const result = isDayContainCurrentEvent(item, displayedDate);
+    return result;
+  });
 
+  const groupedArrayOfEvents = [...filtredEventList, ...filtredGlobalHolidays];
+
+  const cells = [...new Array(HOURS_PER_DAY)];
   return (
     <ShowDayWrapper>
       <EventsWrapper>
-        <ScaleWrapper>
-        {
-          cells.map((eventList,i)=>(
-            <ScaleCellWrapper key={i}>
-              <ScaleCellTimeWrapper >
-                {
-                  i ? (<>
-                  {`${i}`.padStart(2,'0')}:00
-                  </>) : null
-                }
-                </ScaleCellTimeWrapper>
-              <ScaleCellEventWrapper>
-                {
-                  eventList.map((event: IGlobalHoliday | IEvent)=>(
-                    <ScaleCellEventItemWrapper key={event.id}>
-                      <EventItemTittle globalHoloday={isEventGlobalHoliday(event) ? true :false} onClick={() => openCreateEditForm(OPERATION_METHOD_EDIT,event,'')}>
-                      { event.title }
-                      </EventItemTittle>
-                    </ScaleCellEventItemWrapper>
-                  ))
-                }
-                  </ScaleCellEventWrapper>
+        <ScaleWrapper ref={ref}>
+          {cells.map((_, i) => (
+            <ScaleCellWrapper
+              key={i}
+              onDrop={(e) => onDropHandler(e, i)}
+              onDragOver={onDragOverHandler}
+            >
+              <ScaleCellTimeWrapper>
+                {i ? <>{`${i}`.padStart(2, "0")}:00</> : null}
+              </ScaleCellTimeWrapper>
+              <ScaleCellEventWrapper />
             </ScaleCellWrapper>
-          ))
-        }
+          ))}
+          {groupedArrayOfEvents.map((event: IGlobalHoliday | IEvent, i) => (
+            <ScaleCellEventItemWrapper
+              onDragEnd={(e) => onDragEndHandler(e, event)}
+              draggable
+              height={heightEventItem * +event.duration}
+              width={eventWidth}
+              key={event.id}
+              top={getTopPosition(event)}
+              left={32 + (eventWidth + 1) * i}
+            >
+              <EventItemTittle
+                globalHoloday={isEventGlobalHoliday(event) ? true : false}
+                onClick={() =>
+                  openCreateEditForm(OPERATION_METHOD_EDIT, event, "")
+                }
+              >
+                {event.title}
+              </EventItemTittle>
+            </ScaleCellEventItemWrapper>
+          ))}
         </ScaleWrapper>
-        
       </EventsWrapper>
       <EventFormWrapper>
         {showForm ? (
@@ -129,10 +147,14 @@ function ShowDayComponent({
           </div>
         ) : (
           <>
-          <CreateButtonWrapper onClick={()=>openCreateEditForm(OPERATION_METHOD_CREATE,null,displayedDate)}>
-            Create
-          </CreateButtonWrapper>
-          <NoEventMsg>No event selected</NoEventMsg>
+            <CreateButtonWrapper
+              onClick={() =>
+                openCreateEditForm(OPERATION_METHOD_CREATE, null, displayedDate)
+              }
+            >
+              Create
+            </CreateButtonWrapper>
+            <NoEventMsg>No event selected</NoEventMsg>
           </>
         )}
       </EventFormWrapper>

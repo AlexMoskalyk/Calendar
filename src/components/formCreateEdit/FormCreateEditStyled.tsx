@@ -6,6 +6,10 @@ type FormButtonProps = {
   disabled? :boolean,
 }
 
+type ListOfHoursProps = {
+  leftPosition?:string,
+}
+
 export const FormPositionWrapper = styled.div`
   position: absolute;
   z-index: 100;
@@ -20,7 +24,7 @@ export const FormPositionWrapper = styled.div`
 `;
 
 export const FormWrapper = styled(ShadowWrapper)`
-width: 320px;
+// width: 320px;
 min-width: 320px;
 height: 100%;
 background-color:var(--form-bg-color);
@@ -80,7 +84,7 @@ justify-content:flex-end;
 
 
 export const SelectEventTimeWrapper = styled('div')`
-  padding: 8px 14px;
+  padding: 8px 10px;
   border-bottom: 1px solid #464648;
   display: flex;
 `;
@@ -88,10 +92,11 @@ export const SelectEventTimeWrapper = styled('div')`
 
 export const PositionRelative = styled('div')`
   position: relative;
+  // display:flex;
 `;
 
 
-export const ListOfHours = styled('ul')`
+export const ListOfHours = styled('ul')<ListOfHoursProps>`
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -99,7 +104,7 @@ export const ListOfHours = styled('ul')`
   overflow-y: scroll;
   color: #000;
   position: absolute;
-  left: 2px;
+  left: ${props => props.leftPosition};
   background-color: var(--form-input-border-color);
 `;
 
@@ -119,6 +124,19 @@ color:var(--form-input-color);
 outline:unset;
 border-bottom: 1px solid var(--form-input-border-color)
 `;
+
+export const DateHandlersWrapper = styled.div`
+position: relative;
+`;
+
+export const DurationHandlerWrapper = styled.div`
+`;
+
+export const DatePickerWrapper = styled.div`
+
+`;
+
+
 
 
 

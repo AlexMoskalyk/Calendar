@@ -2,7 +2,13 @@
   "name": "calendar",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://AlexMoskalyk.github.io/Calendar",
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/material": "^5.11.16",
+    "@mui/styled-engine-sc": "^5.11.11",
+    "@mui/x-date-pickers": "^6.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,6 +18,8 @@
     "@types/react-dom": "^18.0.11",
     "@types/styled-components": "^5.1.26",
     "@types/uuid": "^9.0.1",
+    "gh-pages": "^5.0.0",
+    "html2canvas": "^1.4.1",
     "json-server": "^0.17.3",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -28,6 +36,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "server": "json-server -p 5000  --watch db.json"
   },
   "eslintConfig": {
